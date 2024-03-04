@@ -1,10 +1,8 @@
-
-
-
 function updateOutput() {
-    const editorContent = document.getElementById('editor').querySelector('textarea').value;
+    const editorContent = document.getElementById('codeInput').value;
     const outputFrame = document.getElementById('outputFrame');
     const output = outputFrame.contentDocument || outputFrame.contentWindow.document;
+
 
     // outputFrame.contentDocument: This part is trying to access the contentDocument property of the iframe. The contentDocument property represents the document content of the iframe. This property is supported in most modern browsers.
 
@@ -18,7 +16,40 @@ function updateOutput() {
     // output.write(editorContent): This line writes the content of the editorContent (the value of the textarea) into the output document. This is where the actual update of the output content occurs.
     output.close();
     // output.close(): Finally, this method is called to close the document. This step is important to complete the writing process and make sure the changes take effect.
+
+     // Update line numbers based on visible lines
+     updateVisibleLineNumbers();
 }
+
+function updateVisibleLineNumbers() {
+    var codeInput = document.getElementById("codeInput");
+    var lineNumbers = document.getElementById("lineNumbers");
+
+    var scrollTop = codeInput.scrollTop;
+    var lineHeight = codeInput.scrollHeight / codeInput.rows;
+    var firstVisibleLineNumber = Math.floor(scrollTop / lineHeight) + 1;
+
+    var lines = codeInput.value.split("\n");
+    var lineNumberContent = "";
+
+    for (var i = firstVisibleLineNumber; i <= lines.length; i++) {
+        lineNumberContent += i + "<br>";
+    }
+
+    lineNumbers.innerHTML = "<pre>" + lineNumberContent + "</pre>";
+}
+
+
+function syncScroll() {
+    var codeInput = document.getElementById("codeInput");
+    var lineNumbers = document.getElementById("lineNumbers");
+
+    lineNumbers.scrollTop = codeInput.scrollTop;
+}
+
+// Initial line numbers update
+updateVisibleLineNumbers();
+
 
  let clear = document.getElementById('clear');
  clear.addEventListener('click', function(){
@@ -29,19 +60,3 @@ function updateOutput() {
  })
 
 
- function updateLineNumbers() {
-    var codeInput = document.getElementById("codeInput");
-    var lineNumbers = document.getElementById("lineNumbers");
-
-    var lines = codeInput.value.split("\n");
-    var lineNumberContent = "";
-
-    for (var i = 1; i <= lines.length; i++) {
-        lineNumberContent += i + "<br>";
-    }
-
-    lineNumbers.innerHTML = lineNumberContent;
-}
-
-// Initial line numbers update
-updateLineNumbers();
